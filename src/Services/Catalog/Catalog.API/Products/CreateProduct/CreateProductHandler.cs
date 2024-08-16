@@ -1,5 +1,6 @@
 ﻿using BuildingBlocks.CQRS;
 using Catalog.API.Models;
+
 namespace Catalog.API.Products.CreateProduct
 {
     public record CreateProductCommand(
@@ -13,6 +14,7 @@ namespace Catalog.API.Products.CreateProduct
         {
             // Business logic
             // Craate a model object
+            // var product = command.Adapt<Product>();
             var product = new Product
             {
                 Name = command.Name,
