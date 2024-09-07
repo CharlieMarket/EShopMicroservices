@@ -1,6 +1,19 @@
-﻿namespace Catalog.API.Products.CreateProduct
+﻿using BuildingBlocks.EndpointFilters;
+
+namespace Catalog.API.Products.CreateProduct
 {
     public record CreateProductRequest(string Name, string Description, List<string> Category, string ImageFile, decimal Price);
+
+	public class CreateProductRequestvalidator : AbstractValidator<CreateProductRequest>
+	{
+		public CreateProductRequestvalidator()
+		{
+			RuleFor(x => x.Name).NotEmpty().WithMessage("name is required!");
+			RuleFor(x => x.Category).NotEmpty().WithMessage("Category is required!");
+			RuleFor(x => x.ImageFile).NotEmpty().WithMessage("ImageFile is required!");
+			RuleFor(x => x.Price).GreaterThan(0).WithMessage("Price must be greather than 0!");
+		}
+	}
 
 	public record CreateProductResponse(Guid Id);
 	public class CreateProductEndpoint : ICarterModule
@@ -18,10 +31,9 @@
 			)
 			.WithName("CreateProduct")
 			.Produces<CreateProductResponse>(StatusCodes.Status201Created)
-			.ProducesProblem(StatusCodes.Status400BadRequest)
 			.WithSummary("Create Product")
-			.WithDescription("Create Product");
-
+			.WithDescription("Create Product")
+			.WithRequestValidation<CreateProductRequest>();
 		}
 	}
 }
