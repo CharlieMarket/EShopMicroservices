@@ -20,7 +20,7 @@ namespace Catalog.API.Products.GetProductsByFilter
         {
 			RuleFor(r => r).Must(r => {
 				ProductFilterType ft = ProductFilterType.None;
-				ft = (r.Id == Guid.Empty) ? ft : (ft | ProductFilterType.AllowId);
+				ft = (r.Id is null || r.Id == Guid.Empty) ? ft : (ft | ProductFilterType.AllowId);
 				ft = (string.IsNullOrEmpty(r.Name)) ? ft : (ft | ProductFilterType.AllowPartialName);
 				//ft = (r.Category == null || r.Category.Count == 0) ? ft : (ft | ProductFilterType.Category);
 				ft = (r.MinimunPrice == null) ? ft : (ft | ProductFilterType.MinimunPrice);
