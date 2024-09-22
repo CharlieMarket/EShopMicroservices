@@ -2,7 +2,7 @@ using BuildingBlocks.Behaviors;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 
-var builder = WebApplication.CreateBuilder(args);
+var builder = WebApplication.CreateSlimBuilder(args);
 
 var assembly = typeof(Program).Assembly;
 builder.Services.AddMediatR(config =>
@@ -21,7 +21,11 @@ builder.Services.AddMarten( opts =>
 	opts.AutoCreateSchemaObjects = Weasel.Core.AutoCreate.CreateOrUpdate; // Valor por defecto, no es necesario explícitamente
 }).UseLightweightSessions() ;
 
+builder.WebHost.UseKestrelHttpsConfiguration(); //opcional, como estamos detrás de un gateway, no necesitamos https
+
 var app = builder.Build();
+
+
 
 app.MapCarter();
 //app.UseExceptionHandler(options => { });
