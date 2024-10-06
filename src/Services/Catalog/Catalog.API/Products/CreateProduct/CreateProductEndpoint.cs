@@ -30,13 +30,12 @@ namespace Catalog.API.Products.CreateProduct
 					return Results.Created($"/productos/{response.Id}", response);
 				}
 			)
-			.WithRequestValidation<CreateProductRequest>()
+   			.WithRequestValidation<CreateProductRequest>()
 			.WithName("CreateProduct")
 			.Produces<CreateProductResponse>(StatusCodes.Status201Created)
 			.WithSummary("Create Product")
-			.WithDescription("Create Product")
-			;
-
+			.WithDescription("Create Product");
+			
 		}
 	}
 }
