@@ -81,4 +81,15 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+CREATE OR REPLACE FUNCTION get_products_by_PartialName(p_name TEXT)
+RETURNS TABLE(data JSONB) AS $$
+BEGIN
+    RETURN QUERY
+    SELECT m.data
+    FROM mt_doc_product m
+    WHERE 
+        (m.data->'Name')::TEXT ILIKE '%' || p_name || '%';
+END;
+$$ LANGUAGE plpgsql;
+
  */
