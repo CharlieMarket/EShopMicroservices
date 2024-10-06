@@ -1,5 +1,6 @@
 ﻿
 using BuildingBlocks.EndpointFilters;
+using Marten;
 
 namespace Catalog.API.Products.GetProductsByFilter
 {
@@ -7,7 +8,7 @@ namespace Catalog.API.Products.GetProductsByFilter
 		public Guid? Id { get; set; }
 		public string? Name { get; set; }
 		public string? Description { get; set; }
-		//public List<string>? Category { get; set; }
+		public string? Category { get; set; }
 		public string? ImageFile { get; set; }
 		public decimal? MinimunPrice { get; set; }
 		public decimal? MaximunPrice { get; set; }
@@ -22,7 +23,7 @@ namespace Catalog.API.Products.GetProductsByFilter
 				ProductFilterType ft = ProductFilterType.None;
 				ft = (r.Id is null || r.Id == Guid.Empty) ? ft : (ft | ProductFilterType.AllowId);
 				ft = (string.IsNullOrEmpty(r.Name)) ? ft : (ft | ProductFilterType.AllowPartialName);
-				//ft = (r.Category == null || r.Category.Count == 0) ? ft : (ft | ProductFilterType.Category);
+				ft = (string.IsNullOrEmpty(r.Category)) ? ft : (ft | ProductFilterType.Category);
 				ft = (r.MinimunPrice == null) ? ft : (ft | ProductFilterType.MinimunPrice);
 				ft = (r.MaximunPrice == null) ? ft : (ft | ProductFilterType.MaximunPrice);
 				r.FilterType = ft;
@@ -35,7 +36,7 @@ namespace Catalog.API.Products.GetProductsByFilter
 		}
     }
 
-	public record GetProductsByFilterResponse(Product Product);
+	public record GetProductsByFilterResponse(Product[] Products);
 	public class GetProductsByFilterEndpoint : ICarterModule
 	{
 		public void AddRoutes(IEndpointRouteBuilder app)

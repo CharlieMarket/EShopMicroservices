@@ -1,11 +1,22 @@
 using BuildingBlocks.Behaviors;
+using Catalog.API;
 using Marten;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateSlimBuilder(args);
 
 var assembly = typeof(Program).Assembly;
+
+// Register the ReadWriteDbContext
+builder.Services.AddDbContext<ReadWriteDbContext>(options =>
+	options.UseNpgsql(builder.Configuration.GetConnectionString("ReadWriteConnection")));
+
+// Register the ReadOnlyDbContext
+builder.Services.AddDbContext<ReadOnlyDbContext>(options =>
+	options.UseNpgsql(builder.Configuration.GetConnectionString("ReadOnlyConnection")));
+
 builder.Services.AddMediatR(config =>
 {
 	config.RegisterServicesFromAssembly(assembly);

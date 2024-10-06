@@ -1,4 +1,6 @@
-﻿namespace Catalog.API.Products.GetProducts
+﻿using Marten;
+
+namespace Catalog.API.Products.GetProducts
 {
 	public record GetProductsQuery(): IQuery<GetProductsResult>;
 	public record GetProductsResult(IEnumerable<Product> Products);

@@ -1,4 +1,6 @@
-﻿namespace Catalog.API.Products.UpdateProduct
+﻿using Marten;
+
+namespace Catalog.API.Products.UpdateProduct
 { 
 	public record UpdateProductCommand(
 	   Guid Id, string Name, string Description, List<string> Category, string ImageFile, decimal Price)

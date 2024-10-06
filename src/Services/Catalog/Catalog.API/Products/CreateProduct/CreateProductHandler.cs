@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Marten;
+using Microsoft.Extensions.Logging;
 
 namespace Catalog.API.Products.CreateProduct
 {

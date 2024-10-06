@@ -1,4 +1,6 @@
-﻿namespace Catalog.API.Products.GetProductByCategory
+﻿using Marten;
+
+namespace Catalog.API.Products.GetProductByCategory
 {
 	public record GetProductByCategoryQuery(String Category) : IQuery<GetProductByCategoryResult>;
 	public record GetProductByCategoryResult(IEnumerable<Product> Products);

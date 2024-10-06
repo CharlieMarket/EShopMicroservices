@@ -1,4 +1,5 @@
 ﻿using Catalog.API.Products.DeleteProduct;
+using Marten;
 
 namespace Catalog.API.Products.DeleteProduct
 {
