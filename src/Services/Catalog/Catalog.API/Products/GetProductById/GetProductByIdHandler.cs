@@ -1,9 +1,11 @@
-﻿using Marten;
+﻿using BuildingBlocks.CommandErrors;
+using Marten;
+using OneOf;
 
 namespace Catalog.API.Products.GetProductById
 {
 	public record GetProductByIdQuery(Guid Id) : IQuery<GetProductByIdResult>;
-	public record GetProductByIdResult(Product Product);
+	public record GetProductByIdResult(OneOf<Product, RecordNotFound> Product);
 	internal class GetProductByIdQueryHandler(IDocumentSession session, ILogger<GetProductByIdQueryHandler> logger) 
 		: IQueryHandler<GetProductByIdQuery, GetProductByIdResult>
 	{
@@ -14,7 +16,7 @@ namespace Catalog.API.Products.GetProductById
 
 			if(product is null)
 			{
-				throw new ProductNotFoundException(query.Id);
+				return new GetProductByIdResult(new RecordNotFound(query.Id));
 			}
 
 			return new GetProductByIdResult(product);

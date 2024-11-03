@@ -27,8 +27,12 @@ namespace Catalog.API.Products.UpdateProduct
 				{
 					var command = request.Adapt<UpdateProductCommand>();
 					var result = await sender.Send(command);
-					var response = result.Adapt<UpdateProductResponse>();
-					return Results.Ok(response);
+
+					return result.Result.Match<IResult>(
+						response => Results.Ok(response),
+						r => Results.NotFound($"No pasa naipe, no lo pillé al id ${r.Id}"),
+						y => Results.BadRequest( "Tamos mal perrito")
+						);
 				}
 			)
 			.WithName("UpdateProduct")

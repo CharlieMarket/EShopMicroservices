@@ -9,8 +9,14 @@
 			app.MapGet("/products/{id}", async (Guid id, ISender sender) =>
 			{
 				var result = await sender.Send(new GetProductByIdQuery(id));
-				var response = result.Adapt<GetProductByIdResponse>();
-				return Results.Ok(response);
+				var respuesta = result.Product.Match<IResult>(
+					product => {
+						var r = new GetProductByIdResponse(product.Adapt<Product>());
+						return Results.Ok(r);
+						},
+					notFound => Results.NotFound($"Not found product with Id ${notFound.Id}")
+				);
+				return respuesta;
 			})
 			.WithName("GetProductById")
 			.Produces<GetProductByIdResponse>(StatusCodes.Status200OK)

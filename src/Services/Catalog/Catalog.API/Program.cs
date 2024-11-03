@@ -1,3 +1,4 @@
+using System.Text.Json;
 using BuildingBlocks.Behaviors;
 using Catalog.API;
 using Marten;
@@ -6,6 +7,18 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateSlimBuilder(args);
+
+/// MUY IMPORTANTE: Por defecto ThrowOnBadRequest = true EN AMBIENTE DE DESARROLLO
+/// Esto significa que todos los errores de binding de parámetros de GET y de DELETE 
+/// y los de binding del body en POST y PUT (incluyendo formatos equivocados en GUID)
+/// se mostrarán como BAD REQUEST con toda la info para el desarrollador
+/// Si queremos que se comporte como en PRODUCCIÓN, donde no se crean excepciones, sino 
+/// que se envía BAD REQUEST pero sin ningún tipo de información, para no extregar
+/// información a un posible atacante, entonces usamos ThrowOnBadRequest = false
+/// La siguiente línea se puede eliminar porque el ambiente indicará si se está en 
+/// producción o no. Se deja para fines educativos y no complicarse al ver excepciones
+/// pasando mientra desarrollamos
+builder.Services.Configure<RouteHandlerOptions>(options => options.ThrowOnBadRequest = false);
 
 var assembly = typeof(Program).Assembly;
 
@@ -44,50 +57,33 @@ app.MapCarter();
 // ERRORES DE BINDING: OJO: NO DEJAR PASAR EL STACK TRACE
 //  BadHttpRequestException: error al enlazar el parámetro "Nullable<int> pageNumber" a partir de "two".
 //  BadHttpRequestException: Failed to bind parameter "Nullable<int> pageNumber" from "two". 412
-app.UseExceptionHandler(
-	exceptionHandlerApp =>
-{
-	exceptionHandlerApp.Run(async context =>
-	{
-		var exception = context.Features.Get<IExceptionHandlerFeature>()?.Error;
-		if (exception == null)
-			return;
+//app.UseExceptionHandler(
+//	exceptionHandlerApp =>
+//{
+//	exceptionHandlerApp.Run(async context =>
+//	{
+//		var exception = context.Features.Get<IExceptionHandlerFeature>()?.Error;
+//		if (exception == null)
+//			return;
+//		if (exception is BadHttpRequestException)
+//			return;
+//		var problemDetails = new ProblemDetails
+//			{
+//				Title = exception.Message,
+//				Status = StatusCodes.Status500InternalServerError,
+//				Detail = exception.StackTrace
+//			};
+//		context.Response.StatusCode = StatusCodes.Status500InternalServerError;
 
-		var problemDetails = new ProblemDetails
-		{
-			Title = exception.Message,
-			Status = StatusCodes.Status500InternalServerError,
-			Detail = exception.StackTrace
-		};
-		context.Response.StatusCode = StatusCodes.Status500InternalServerError;
+//		var logger = context.RequestServices.GetRequiredService<ILogger<Program>>();
+//		logger.LogError(exception, exception.Message);
 
-		if (exception.Message.Contains("bind parameter") || exception.Message.Contains("enlazar el parámetro"))
-		{
-			problemDetails.Title = "Invalid parameter value";
-			problemDetails.Status = StatusCodes.Status412PreconditionFailed;
-			problemDetails.Detail = "Parameter not match required format";
-			context.Response.StatusCode = StatusCodes.Status412PreconditionFailed;
-		}
+//		context.Response.ContentType = "application/problem+json";
 
-		if (exception.Message.Contains("bind parameter") || exception.Message.Contains("enlazar el parámetro"))
-		{
-			problemDetails.Title = "Invalid parameter value";
-			problemDetails.Status = StatusCodes.Status412PreconditionFailed;
-			problemDetails.Detail = "Parameter not match required format";
-			context.Response.StatusCode = StatusCodes.Status412PreconditionFailed;
-		}
+//		await context.Response.WriteAsJsonAsync(problemDetails);
 
-		var logger = context.RequestServices.GetRequiredService<ILogger<Program>>();
-		logger.LogError(exception, exception.Message);
-
-	
-
-		context.Response.ContentType = "application/problem+json";
-
-		await context.Response.WriteAsJsonAsync(problemDetails);
-
-	});
-});
+//	});
+//});
 
 
 

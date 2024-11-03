@@ -92,4 +92,10 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+-- Index on the 'Category' array within 'data'
+CREATE INDEX idx_product_category ON your_table_name USING GIN ((data->'Category'));
+
+-- Index on the 'Price' field within 'data'
+CREATE INDEX idx_product_price ON your_table_name ((data->>'Price')::NUMERIC);
+ 
  */
