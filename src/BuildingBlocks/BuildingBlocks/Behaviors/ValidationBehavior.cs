@@ -9,6 +9,7 @@ namespace BuildingBlocks.Behaviors
 		: IPipelineBehavior<TRequest, TResponse>
 		  where TRequest : ICommand<TResponse>
 	{
+		// Esto es solo en caso de querer verificar validaciones previas a enviar el comando hacia los que escuchan en MediatR
 		public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
 		{
 			var context = new ValidationContext<TRequest>(request);

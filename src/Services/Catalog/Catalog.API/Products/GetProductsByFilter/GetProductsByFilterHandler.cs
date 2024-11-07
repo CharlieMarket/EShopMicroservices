@@ -26,21 +26,13 @@ namespace Catalog.API.Products.GetProductsByFilter
 	{
 		public string Data { get; set; } = string.Empty;
 
-		//[JsonIgnore]
-		//public Product? ProductData
-		//{
-		//	get => JsonSerializer.Deserialize<Product>(Data);
-		//	set => Data = JsonSerializer.Serialize(value);
-		//}
 	}
 
-	internal class GetProductsByFilterQueryHandler(ReadOnlyDbContext dbContext, ILogger<GetProductsByFilterQueryHandler> logger)
+	internal class GetProductsByFilterQueryHandler(ReadOnlyDbContext dbContext)
 		: IQueryHandler<GetProductsByFilterQuery, GetProductsByFilterResult>
 	{
 		public async Task<GetProductsByFilterResult> Handle(GetProductsByFilterQuery query, CancellationToken cancellationToken)
 		{
-			logger.LogInformation("GetProductsByFilterQueryHandler.Handler called with {@query}", query);
-
 			List<Product?> products = [];
 			
 			switch (query.FilterType)

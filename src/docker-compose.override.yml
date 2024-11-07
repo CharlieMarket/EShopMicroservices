@@ -6,6 +6,6 @@ services:
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_DB=CatalogDb
     ports:
-      - "5432:5432"
+      - "8080:5432"
     volumes:
       - postgres_catalog:/var/lib/postgresql/data
