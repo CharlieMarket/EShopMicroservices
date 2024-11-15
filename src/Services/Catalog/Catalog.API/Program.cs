@@ -1,8 +1,10 @@
 using System.Text.Json;
 using BuildingBlocks.Behaviors;
 using Catalog.API;
+using HealthChecks.UI.Client;
 using Marten;
 using Microsoft.AspNetCore.Diagnostics;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -49,6 +51,10 @@ builder.Services.AddMarten( opts =>
 
 builder.WebHost.UseKestrelHttpsConfiguration(); //opcional, como estamos detrás de un gateway, no necesitamos https
 
+// Health checks agregados para ver status de la app
+builder.Services.AddHealthChecks()
+	.AddNpgSql(builder.Configuration.GetConnectionString("Database")!);
+
 var app = builder.Build();
 
 
@@ -90,5 +96,11 @@ app.MapCarter();
 
 
 app.MapGet("/", () => "Hello World!");
+
+// Configuramos Health Checks, con la ruta correspondiente
+app.UseHealthChecks("/health", new HealthCheckOptions
+{
+	ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+});
 
 app.Run();
