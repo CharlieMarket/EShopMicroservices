@@ -1,0 +1,28 @@
+﻿CREATE OR REPLACE FUNCTION get_products_by_Category_MaxPrice(p_category TEXT, p_max_price NUMERIC)
+RETURNS TABLE(data JSONB) AS $$
+BEGIN
+    RETURN QUERY
+    SELECT m.data
+    FROM mt_doc_product m
+    WHERE 
+        m.data->'Category' ? p_category
+        AND (m.data->>'Price')::NUMERIC <= p_max_price;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION get_products_by_PartialName(p_name TEXT)
+RETURNS TABLE(data JSONB) AS $$
+BEGIN
+    RETURN QUERY
+    SELECT m.data
+    FROM mt_doc_product m
+    WHERE 
+        (m.data->'Name')::TEXT ILIKE '%' || p_name || '%';
+END;
+$$ LANGUAGE plpgsql;
+
+-- Index on the 'Category' array within 'data'
+CREATE INDEX idx_product_category ON your_table_name USING GIN ((data->'Category'));
+
+-- Index on the 'Price' field within 'data'
+CREATE INDEX idx_product_price ON your_table_name ((data->>'Price')::NUMERIC);
